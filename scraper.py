@@ -16,7 +16,9 @@ public_notices_url = base_url + '?r=P1.LCC.WEBGUEST&f=%24P1.ESB.PUBNOTAL.ENQ'
 public_notice_details_url = base_url + '?r=P1.LCC.WEBGUEST&f=%24P1.ESB.PUBNOT.VIW&ApplicationId='
 
 def visit_page(conn):
-    page = BeautifulSoup(scraperwiki.scrape(public_notices_url), 'html.parser')
+    userAgent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103'
+    page = scraperwiki.scrape(public_notices_url, "", userAgent)
+    page = BeautifulSoup(page, 'html.parser')
     records = get_applications(page)
     get_more_details(records, conn)
 
@@ -46,9 +48,11 @@ def get_applications(page):
     return records
 
 def get_more_details(records, conn):
+    userAgent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103'
     for record in records:
         log.info(f"Scraping Public Notice - Application Details for {record['council_reference']}")
-        page = BeautifulSoup(scraperwiki.scrape(record['info_url']), 'html.parser')
+        page = scraperwiki.scrape(record['info_url'], "", userAgent)
+        page = BeautifulSoup(page, 'html.parser')
 
         for table in page.find_all('table', class_='grid'):
             for tr in table.find_all('tr'):
